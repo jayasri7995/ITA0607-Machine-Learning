@@ -1,0 +1,41 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
+import io
+
+csv_data = """Outlook,Temperature,Humidity,Wind,Play
+Sunny,Hot,High,Weak,No
+Sunny,Hot,High,Strong,No
+Overcast,Hot,High,Weak,Yes
+Rain,Mild,High,Weak,Yes
+Rain,Cool,Normal,Weak,Yes
+Rain,Cool,Normal,Strong,No
+Overcast,Cool,Normal,Strong,Yes
+Sunny,Mild,High,Weak,No
+Sunny,Cool,Normal,Weak,Yes
+Rain,Mild,Normal,Weak,Yes
+Sunny,Mild,Normal,Strong,Yes
+Overcast,Mild,High,Strong,Yes
+Overcast,Hot,Normal,Weak,Yes
+Rain,Mild,High,Strong,No"""
+data = pd.read_csv(io.StringIO(csv_data))
+
+le = LabelEncoder()
+
+for col in data.columns:
+    data[col] = le.fit_transform(data[col])
+
+X = data.iloc[:, :-1]
+y = data.iloc[:, -1]
+
+model = DecisionTreeClassifier(criterion="entropy")
+model.fit(X, y)
+
+prediction = model.predict([[2,2,1,1]])
+
+print("Prediction:", prediction)
+
+plt.figure(figsize=(10,6))
+plot_tree(model, filled=True)
+plt.show()
